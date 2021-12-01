@@ -1,0 +1,10 @@
+"id";"firstname";"lastname";"email";"password";"phone";"image";"pin";"description";"balance"
+1;"supri";"yadi";"supri@gmail.com";"$2b$10$h4oBIqf8RIxpM1TzsoaEd.qbYPIoYBpd.yRRA1Z3p7rqX/aZM7f4y";"123454345";"810715194.png";"$2b$10$YnLIxgjqzzWBBHhlBI/9xuN9MA7cxy1PoI5HBsbnFGHUCTy/ok7pm";"halooo";1380000
+2;"paiman";"joe";"paiman@gmail.com";"$2b$10$mo76VmwFhiv6ne5ZO2oJZOgk2p8gtw029ZZqqz/p.w01zXJ9amITS";"123";"default.png";"$2b$10$j3PEH07TdoAZADcS/4CLUe7Mcj.Z2lhhHP32hVG56tou50Sz68Fqy";"";174000
+3;"Fariz";"Irfan";"fariz@gmail.com";"$2b$10$21DYbeAHlChjvlcO9xXoW.DCtmzIs2JC/9.LE4Ka5c6k9wZASwHO2";"123458";"default.png";"$2b$10$lodgG2IFYB8Y9Q1H.YBIF.OYzT/O2NDoAUz1/jSDEBILlGg9tuWI.";"";115000
+4;"jerry";"rifai";"jerry@gmail.com";"$2b$10$myQlLl1inVX/RDr5Uig4I.2U3cjoNCTIZ4o0aCBiAY9AH9rJWbhzG";"123";"default.png";"";"";1999
+5;"haikal";"joe";"haikal@gmail.com";"$2b$10$u1VrRz5JRScoRFhRTyOn2upEjxhi9wBgKX7zM9JCgMvKewXLUggn.";"123";"default.png";"";"";34001
+8;"brando";"joe";"brando@gmail.com";"$2b$10$rjqB6N2zHhRSzwebmnca..bPnMJsG2tFwCztHhqZ3ZCA1TT.8FJUG";"08984948";"default.png";"$2b$10$2ebp4XaETbL6ywW3FaNXU.wy6qrvpkX51/8SCaxZWbxgIMGtf6KsS";"";2000
+9;"jamil";"harry";"jamil@gmail.com";"$2b$10$4sS4BISrDEWC8HY2ccpU2eUY4/mlmiAV0e.VTcHbOXomNviYXARc6";"123";"default.png";"$2b$10$Hf9Rf8eH0mPzVP8VXc5p3O/sQyv/D3YXyQXftcGNWYW5CRDcoTj4S";"";0
+10;"andri ";"tnm";"andri@gmail.com";"$2b$10$p1HkmvTuA.tOtSyZqTigveyYocChTh16x3Ux2pCVowSxqaDpVVttm";"0892939";"default.png";"";"";0
+11;"ragil";"sipuden";"ragil@gmail.com";"$2b$10$s0DHJkBNVDDq0KBP8iSzB.evCYqu50w2dqPuxC8akKQ2fJnWE39c6";"123";"default.png";"";"";0
