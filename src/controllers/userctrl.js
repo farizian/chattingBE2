@@ -8,7 +8,6 @@ const { success, failed, successlogin } = require('../helper/response');
 
 const env = require('../helper/env');
 
-// table user di dalam database coffee_shop di mysql
 const userctrl = {
 // menampilkan list user
   getlist: (req, res) => {
@@ -90,12 +89,12 @@ const userctrl = {
         if (result.length <= 0) {
           failed(res, 400, 'Email salah');
         } else {
-          const user = result[0];
+          const user = result.rows[0];
           const userId = {
             id: user.id,
           };
           const token = jwt.sign(userId, env.pwtoken);
-          const passwordHash = result[0].password;
+          const passwordHash = user.password;
           const pw = bcrypt.compareSync(body.password, passwordHash);
           if (pw === true) {
             successlogin(res, result, token);
