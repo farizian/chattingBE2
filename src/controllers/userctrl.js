@@ -116,7 +116,7 @@ const userctrl = {
       const { email } = body;
       const img = 'default.png';
       models.checkregister(body).then((result) => {
-        if (result[0].email) {
+        if (result.rows[0].email) {
           failed(res, 401, 'email sudah digunakan');
         }
       }).catch(() => {
@@ -146,7 +146,7 @@ const userctrl = {
     try {
       const { id } = req.params;
       const imgName = await models.getimg(id);
-      const imgPath = `./src/img/${imgName[0].img}`;
+      const imgPath = `./src/img/${imgName.rows[0].img}`;
       fs.unlink(imgPath, ((errImg) => {
         if (errImg) {
           models.del(id).then((result) => {
@@ -173,7 +173,7 @@ const userctrl = {
       const { body } = req;
       const id = req.userId;
       const detail = await models.getdetail(id);
-      const oldPwHash = detail[0].password;
+      const oldPwHash = detail.rows[0].password;
       bcrypt.compare(body.oldpassword, oldPwHash, (error, checkpw) => {
         if (error) {
           // eslint-disable-next-line no-console
@@ -215,8 +215,8 @@ const userctrl = {
       const { body } = req;
       const id = req.userId;
       const imgName = await models.getimg(id);
-      const imgPath = `./src/img/${imgName[0].img}`;
-      const img = !req.file ? imgName[0].img : req.file.filename;
+      const imgPath = `./src/img/${imgName.rows[0].img}`;
+      const img = !req.file ? imgName.rows[0].img : req.file.filename;
       if (!req.file) {
         models.update(id, img, body)
           .then((result) => {
