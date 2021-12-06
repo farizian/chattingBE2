@@ -86,7 +86,7 @@ const userctrl = {
     try {
       const { body } = req;
       models.login(body).then((result) => {
-        if (result.length <= 0) {
+        if (result.rows.length <= 0) {
           failed(res, 400, 'Email salah');
         } else {
           const user = result.rows[0];
