@@ -94,7 +94,7 @@ const usermodel = {
     });
   }),
   del: (id) => new Promise((resolve, reject) => {
-    db.query(`delete from public.user where id='${id}'`, (err, result) => {
+    db.query(`delete from public.user where id = '${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -103,7 +103,7 @@ const usermodel = {
     });
   }),
   updatePw: (id, pw) => new Promise((resolve, reject) => {
-    db.query(`update public.user set password='${pw}' where id='${id}'`, (err, result) => {
+    db.query(`update public.user set password = '${pw}' where id = '${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -112,7 +112,7 @@ const usermodel = {
     });
   }),
   updateEmail: (id, email) => new Promise((resolve, reject) => {
-    db.query(`update public.user set email='${email}' where id='${id}'`, (err, result) => {
+    db.query(`update public.user set email = '${email}' where id = '${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -124,7 +124,7 @@ const usermodel = {
     const {
       username, phone, tagName, bio,
     } = body;
-    db.query(`update public.user set img='${img}', username='${username}', phone='${phone}', tagName='${tagName}', bio='${bio}' where id='${id}'`, (err, result) => {
+    db.query(`update public.user set img = '${img}', username = '${username}', phone = '${phone}', tagname = '${tagName}', bio = '${bio}' where id = '${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {

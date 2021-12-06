@@ -17,8 +17,8 @@ const messagemodel = {
       `SELECT m.id, m.sender, sender.username as senderName, sender.img as senderImg,
       m.receiver, receiver.username, receiver.img, m.text_msg,
       m.created FROM message as m
-      left join user as sender on m.sender = sender.id
-      left join user as receiver on m.receiver = receiver.id  WHERE (sender =${sender} AND receiver = ${receiver}) OR (sender=${receiver} AND receiver=${sender}) order by id asc`,
+      left join public.user as sender on m.sender = sender.id
+      left join public.user as receiver on m.receiver = receiver.id  WHERE (sender =${sender} AND receiver = ${receiver}) OR (sender=${receiver} AND receiver=${sender}) order by id asc`,
       (err, result) => {
         if (err) {
           // console.log(err)
@@ -34,7 +34,7 @@ const messagemodel = {
     const {
       sender, receiver, msg,
     } = payload;
-    db.query(`insert into message (sender, receiver, text_msg) value ('${sender}', '${receiver}', '${msg}')`, (err, result) => {
+    db.query(`insert into message (sender, receiver, text_msg) values ('${sender}', '${receiver}', '${msg}')`, (err, result) => {
       if (err) {
         reject(err);
       } else {

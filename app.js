@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     // console.log(sender);
     // console.log(receiver);
     models.getmsg(sender, receiver).then((result) => {
-      io.to(sender).emit('history-messages', result);
+      io.to(sender).emit('history-messages', result.rows);
     }).catch((err) => {
       console.log(err);
     });
@@ -62,14 +62,14 @@ io.on('connection', (socket) => {
   socket.on('deleteMessage', async (payload) => {
     const { idMsg, sender, receiver } = payload;
     const data = await models.getmsg(sender, receiver);
-    const { id } = data.pop();
+    const { id } = data.rows.pop();
     if (idMsg) {
       models.delMsg(idMsg)
         .then(() => {
           models.getmsg(sender, receiver)
             .then((result) => {
-              io.to(sender).emit('history-messages', result);
-              io.to(receiver).emit('history-messages', result);
+              io.to(sender).emit('history-messages', result.rows);
+              io.to(receiver).emit('history-messages', result.rows);
             }).catch((err) => {
               console.log(err);
             });
@@ -79,8 +79,8 @@ io.on('connection', (socket) => {
         .then(() => {
           models.getmsg(sender, receiver)
             .then((result) => {
-              io.to(sender).emit('history-messages', result);
-              io.to(receiver).emit('history-messages', result);
+              io.to(sender).emit('history-messages', result.rows);
+              io.to(receiver).emit('history-messages', result.rows);
             }).catch((err) => {
               console.log(err);
             });

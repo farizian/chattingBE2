@@ -22,7 +22,7 @@ const multerImg = multer({
       cb(error, false);
     }
   },
-  limits: { fileSize: 5 * 1000 },
+  limits: { fileSize: 5 * 1000 * 1000 },
 });
 
 const upload = (req, res, next) => {

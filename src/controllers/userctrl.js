@@ -225,7 +225,7 @@ const userctrl = {
           .catch((err) => {
             failed(res, 400, err);
           });
-      } else if (imgName[0].img === 'default.png') {
+      } else if (imgName.rows[0].img === 'default.png') {
         models.update(id, img, body)
           .then((result) => {
             success(res, result, 'Update User Data Success');
