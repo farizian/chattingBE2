@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
-// menghandle query table user
+// menghandle query table public.user
 const db = require('../config/db');
 
 const usermodel = {
   gettotal: () => new Promise((resolve, reject) => {
-    db.query('select * from user', (err, result) => {
+    db.query('select * from public.user', (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -13,7 +13,7 @@ const usermodel = {
     });
   }),
   getlist: (search, field, sort, limit, offset) => new Promise((resolve, reject) => {
-    db.query(`select * from user where username like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, (err, result) => {
+    db.query(`select * from public.user where username like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -22,7 +22,7 @@ const usermodel = {
     });
   }),
   login: (body) => new Promise((resolve, reject) => {
-    db.query(`select * from user where email="${body.email}"`, (err, result) => {
+    db.query(`select * from public.user where email="${body.email}"`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -32,7 +32,7 @@ const usermodel = {
   }),
   register: (body, pass, img) => new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO user (img, username, email, password)
+      `INSERT INTO public.user (img, username, email, password)
         VALUE (
           '${img}','${body.username}','${body.email}','${pass}'
         )`, (err, result) => {
@@ -45,7 +45,7 @@ const usermodel = {
     );
   }),
   checkregister: (body) => new Promise((resolve, reject) => {
-    db.query(`select * from user where email='${body.email}' `, (err, result) => {
+    db.query(`select * from public.user where email='${body.email}' `, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -54,7 +54,7 @@ const usermodel = {
     });
   }),
   getdetail: (id) => new Promise((resolve, reject) => {
-    db.query(`select * from user where id='${id}'`, (err, result) => {
+    db.query(`select * from public.user where id='${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -63,7 +63,7 @@ const usermodel = {
     });
   }),
   detailByName: (name) => new Promise((resolve, reject) => {
-    db.query(`select * from user where username='${name}'`, (err, result) => {
+    db.query(`select * from public.user where username='${name}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -72,7 +72,7 @@ const usermodel = {
     });
   }),
   getimg: (id) => new Promise((resolve, reject) => {
-    db.query(`select img from user where id='${id}'`, (err, result) => {
+    db.query(`select img from public.user where id='${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -84,7 +84,7 @@ const usermodel = {
     const {
       username, email, phone, tag,
     } = body;
-    db.query(`insert into user (img, username, email, password, phone, tagName) value ('${img}', '${username}', '${email}', '${password}', '${phone}', '${tag}')`, (err, result) => {
+    db.query(`insert into public.user (img, username, email, password, phone, tagName) value ('${img}', '${username}', '${email}', '${password}', '${phone}', '${tag}')`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -93,7 +93,7 @@ const usermodel = {
     });
   }),
   del: (id) => new Promise((resolve, reject) => {
-    db.query(`delete from user where id='${id}'`, (err, result) => {
+    db.query(`delete from public.user where id='${id}'`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -102,7 +102,7 @@ const usermodel = {
     });
   }),
   updatePw: (id, pw) => new Promise((resolve, reject) => {
-    db.query(`update user set password="${pw}" where id="${id}"`, (err, result) => {
+    db.query(`update public.user set password="${pw}" where id="${id}"`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -111,7 +111,7 @@ const usermodel = {
     });
   }),
   updateEmail: (id, email) => new Promise((resolve, reject) => {
-    db.query(`update user set email="${email}" where id="${id}"`, (err, result) => {
+    db.query(`update public.user set email="${email}" where id="${id}"`, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -123,7 +123,7 @@ const usermodel = {
     const {
       username, phone, tagName, bio,
     } = body;
-    db.query(`update user set img="${img}", username="${username}", phone="${phone}", tagName="${tagName}", bio="${bio}" where id="${id}"`, (err, result) => {
+    db.query(`update public.user set img="${img}", username="${username}", phone="${phone}", tagName="${tagName}", bio="${bio}" where id="${id}"`, (err, result) => {
       if (err) {
         reject(err);
       } else {

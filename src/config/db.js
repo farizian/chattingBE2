@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-const mysql = require('mysql2');
+const Pool = require('pg-pool');
 const env = require('../helper/env');
 
 // membuat koneksi ke db mysql
-const data = mysql.createConnection({
-  host: env.host,
-  user: env.db_username,
-  password: env.db_password,
-  database: env.database,
+const data = new Pool({
+  connectionString: env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 // mengekspor koneksi db
 data.connect((err) => {

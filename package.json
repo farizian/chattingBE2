@@ -20,6 +20,8 @@
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.3",
     "mysql2": "^2.3.0",
+    "pg": "^8.7.1",
+    "pg-pool": "^3.4.1",
     "socket.io": "^4.2.0"
   },
   "devDependencies": {
