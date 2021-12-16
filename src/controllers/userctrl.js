@@ -42,7 +42,7 @@ const userctrl = {
     try {
       const id = req.userId; // url parameter untuk mengambil id
       models.getdetail(id).then((result) => {
-        success(res, result, 'get user details success');
+        success(res, result.rows, 'get user details success');
       })
         .catch((err) => {
           failed(res, 500, err);
@@ -55,7 +55,7 @@ const userctrl = {
     try {
       const { id } = req.params; // url parameter untuk mengambil id
       models.getdetail(id).then((result) => {
-        success(res, result, 'get user details success');
+        success(res, result.rows, 'get user details success');
       })
         .catch((err) => {
           failed(res, 500, err);
