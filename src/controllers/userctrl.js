@@ -22,7 +22,7 @@ const userctrl = {
         .then(async (result) => {
           const total = await models.gettotal();
           const output = {
-            data: result,
+            data: result.rows,
             search,
             limit,
             page: query.page,
