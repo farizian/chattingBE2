@@ -2,11 +2,9 @@ require('dotenv').config();
 
 const env = {
   port: process.env.PORT,
-  host: process.env.host,
-  DATABASE_URL: process.env.DATABASE_URL,
-  db_username: process.env.db_username,
-  db_password: process.env.db_password,
-  database: process.env.database,
+  SUPABASE_URL: process.env.VITE_SUPABASE_URL,
+  SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   pwtoken: process.env.pwtoken,
 };
 

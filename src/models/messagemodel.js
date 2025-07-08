@@ -1,70 +1,89 @@
 /* eslint-disable max-len */
-// menghandle query table message
-const db = require('../config/db');
+// menghandle query table messages dengan Supabase
+const supabase = require('../config/supabase');
 
 const messagemodel = {
-  gettotal: () => new Promise((resolve, reject) => {
-    db.query('select * from message', (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result.length);
-      }
-    });
-  }),
-  getmsg: (sender, receiver) => new Promise((resolve, reject) => {
-    db.query(
-      `SELECT m.id, m.sender, sender.username as senderName, sender.img as senderImg,
-      m.receiver, receiver.username, receiver.img, m.text_msg,
-      m.created FROM message as m
-      left join public.user as sender on m.sender = sender.id
-      left join public.user as receiver on m.receiver = receiver.id  WHERE (sender =${sender} AND receiver = ${receiver}) OR (sender=${receiver} AND receiver=${sender}) order by id asc`,
-      (err, result) => {
-        if (err) {
-          // console.log(err)
-          reject(err);
-        } else {
-          // console.log(result)
-          resolve(result);
-        }
-      },
-    );
-  }),
-  insert: (payload) => new Promise((resolve, reject) => {
-    const {
-      sender, receiver, msg,
-    } = payload;
-    db.query(`insert into message (sender, receiver, text_msg) values ('${sender}', '${receiver}', '${msg}')`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  delMsg: (id) => new Promise((resolve, reject) => {
-    db.query(`delete from message where id='${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  update: (body) => new Promise((resolve, reject) => {
+  gettotal: async () => {
+    const { count, error } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true });
+    
+    if (error) throw error;
+    return count;
+  },
+
+  getmsg: async (sender, receiver) => {
+    const { data, error } = await supabase
+      .from('messages')
+      .select(`
+        id,
+        sender,
+        receiver,
+        text_msg,
+        created_at,
+        sender_profile:users!messages_sender_fkey(username, img),
+        receiver_profile:users!messages_receiver_fkey(username, img)
+      `)
+      .or(`and(sender.eq.${sender},receiver.eq.${receiver}),and(sender.eq.${receiver},receiver.eq.${sender})`)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    // Transform data to match the expected format
+    const transformedData = data.map(msg => ({
+      id: msg.id,
+      sender: msg.sender,
+      senderName: msg.sender_profile?.username,
+      senderImg: msg.sender_profile?.img,
+      receiver: msg.receiver,
+      username: msg.receiver_profile?.username,
+      img: msg.receiver_profile?.img,
+      text_msg: msg.text_msg,
+      created: msg.created_at
+    }));
+
+    return { rows: transformedData };
+  },
+
+  insert: async (payload) => {
+    const { sender, receiver, msg } = payload;
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        sender,
+        receiver,
+        text_msg: msg
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  delMsg: async (id) => {
+    const { data, error } = await supabase
+      .from('messages')
+      .delete()
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  update: async (body) => {
     const { sender, receiver, msg } = body;
-    db.query(`update message set text_msg="${msg}" where
-    (sender='${sender}' and receiver='${receiver}')
-    OR
-    (sender='${receiver}' and receiver='${sender}') `,
-    (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
+    const { data, error } = await supabase
+      .from('messages')
+      .update({ text_msg: msg })
+      .or(`and(sender.eq.${sender},receiver.eq.${receiver}),and(sender.eq.${receiver},receiver.eq.${sender})`)
+      .select();
+
+    if (error) throw error;
+    return data;
+  },
 };
 
 module.exports = messagemodel;

@@ -1,137 +1,180 @@
 /* eslint-disable max-len */
-// menghandle query table public.user
-const db = require('../config/db');
+// menghandle query table users dengan Supabase
+const supabase = require('../config/supabase');
 
 const usermodel = {
-  gettotal: () => new Promise((resolve, reject) => {
-    db.query('select * from public.user', (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result.length);
-      }
-    });
-  }),
-  getlist: (search, field, sort, limit, offset) => new Promise((resolve, reject) => {
-    db.query(`select * from public.user where username like '%${search}%' order by ${field} ${sort} limit ${limit} offset ${offset}`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  login: (body) => new Promise((resolve, reject) => {
+  gettotal: async () => {
+    const { count, error } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true });
+    
+    if (error) throw error;
+    return count;
+  },
+
+  getlist: async (search, field, sort, limit, offset) => {
+    let query = supabase
+      .from('users')
+      .select('*');
+
+    if (search) {
+      query = query.ilike('username', `%${search}%`);
+    }
+
+    query = query
+      .order(field, { ascending: sort === 'asc' })
+      .range(offset, offset + limit - 1);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return { rows: data };
+  },
+
+  login: async (body) => {
     const { email } = body;
-    db.query(`SELECT * FROM public.user WHERE email = '${email}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  register: (body, pass, img) => new Promise((resolve, reject) => {
-    db.query(
-      `INSERT INTO public.user (img, username, email, password)
-        VALUES (
-          '${img}','${body.username}','${body.email}','${pass}'
-        )`, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      },
-    );
-  }),
-  checkregister: (body) => new Promise((resolve, reject) => {
-    db.query(`select * from public.user where email='${body.email}' `, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  getdetail: (id) => new Promise((resolve, reject) => {
-    db.query(`select * from public.user where id='${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  detailByName: (name) => new Promise((resolve, reject) => {
-    db.query(`select * from public.user where username='${name}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  getimg: (id) => new Promise((resolve, reject) => {
-    db.query(`select img from public.user where id='${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  insert: (img, body, password) => new Promise((resolve, reject) => {
-    const {
-      username, email, phone, tag,
-    } = body;
-    db.query(`insert into public.user (img, username, email, password, phone, tagName) value ('${img}', '${username}', '${email}', '${password}', '${phone}', '${tag}')`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  del: (id) => new Promise((resolve, reject) => {
-    db.query(`delete from public.user where id = '${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  updatePw: (id, pw) => new Promise((resolve, reject) => {
-    db.query(`update public.user set password = '${pw}' where id = '${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  updateEmail: (id, email) => new Promise((resolve, reject) => {
-    db.query(`update public.user set email = '${email}' where id = '${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
-  update: (id, img, body) => new Promise((resolve, reject) => {
-    const {
-      username, phone, tagName, bio,
-    } = body;
-    db.query(`update public.user set img = '${img}', username = '${username}', phone = '${phone}', tagname = '${tagName}', bio = '${bio}' where id = '${id}'`, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }),
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return { rows: data ? [data] : [] };
+  },
+
+  register: async (body, pass, img) => {
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        img,
+        username: body.username,
+        email: body.email,
+        password: pass
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  checkregister: async (body) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('email')
+      .eq('email', body.email)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return { rows: data ? [data] : [] };
+  },
+
+  getdetail: async (id) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return { rows: [data] };
+  },
+
+  detailByName: async (name) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', name)
+      .single();
+
+    if (error) throw error;
+    return { rows: [data] };
+  },
+
+  getimg: async (id) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('img')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return { rows: [data] };
+  },
+
+  insert: async (img, body, password) => {
+    const { username, email, phone, tag } = body;
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        img,
+        username,
+        email,
+        password,
+        phone,
+        tagname: tag
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  del: async (id) => {
+    const { data, error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updatePw: async (id, pw) => {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ password: pw })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updateEmail: async (id, email) => {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ email })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  update: async (id, img, body) => {
+    const { username, phone, tagName, bio } = body;
+    const { data, error } = await supabase
+      .from('users')
+      .update({
+        img,
+        username,
+        phone,
+        tagname: tagName,
+        bio
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
 };
 
 module.exports = usermodel;
