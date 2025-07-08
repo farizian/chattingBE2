@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 /* eslint-disable max-len */
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const models = require('../models/usermodel');
