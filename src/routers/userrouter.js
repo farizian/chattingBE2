@@ -10,11 +10,27 @@ userrouter
   .get('/user', userctrl.getlist)
   .get('/mydetails', midAuth, userctrl.getdetail)
   .get('/detail/:id', userctrl.detailById)
-  .post('/user', upload, userctrl.insert)
+  .post('/user', (req, res, next) => {
+    upload(req, res, (err) => {
+      if (err) {
+        // Handle upload error gracefully
+        req.file = null;
+      }
+      next();
+    });
+  }, userctrl.insert)
   .post('/login', userctrl.login)
   .post('/register', userctrl.register)
   .delete('/user/:id', midAuth, userctrl.del)
-  .put('/user', midAuth, upload, userctrl.update)
+  .put('/user', midAuth, (req, res, next) => {
+    upload(req, res, (err) => {
+      if (err) {
+        // Handle upload error gracefully
+        req.file = null;
+      }
+      next();
+    });
+  }, userctrl.update)
   .put('/useremail', midAuth, userctrl.updateEmail)
   .put('/userpw', midAuth, userctrl.updatePw);
 

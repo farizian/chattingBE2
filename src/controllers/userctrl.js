@@ -63,7 +63,7 @@ const userctrl = {
     (async () => {
       try {
       const { body } = req;
-      const img = req.file.filename;
+      const img = req.file ? req.file.filename : 'default.png';
       const pw = bcrypt.hashSync(body.password, 10);
         const result = await models.insert(img, body, pw);
         success(res, result, 'Input To User Data Success');
@@ -134,29 +134,10 @@ const userctrl = {
     (async () => {
       try {
       const { id } = req.params;
-      const imgName = await models.getimg(id);
-      const imgPath = `./src/img/${imgName.rows[0].img}`;
-      fs.unlink(imgPath, ((errImg) => {
-        if (errImg) {
-          (async () => {
-            try {
-              const result = await models.del(id);
-            success(res, result, 'Delete User Data Success');
-            } catch (err) {
-              failed(res, 404, err);
-            }
-          })();
-        } else {
-          (async () => {
-            try {
-              const result = await models.del(id);
-            success(res, result, 'Delete User Data Success');
-            } catch (err) {
-              failed(res, 404, err);
-            }
-          })();
-        }
-      }));
+      // Note: File deletion from Supabase Storage should be implemented here
+      // For now, just delete the user record
+      const result = await models.del(id);
+      success(res, result, 'Delete User Data Success');
       } catch (err) {
         failed(res, 404, err);
       }
@@ -201,37 +182,12 @@ const userctrl = {
       const { body } = req;
       const id = req.userId;
       const imgName = await models.getimg(id);
-      const imgPath = `./src/img/${imgName.rows[0].img}`;
       const img = !req.file ? imgName.rows[0].img : req.file.filename;
-      if (!req.file) {
-        const result = await models.update(id, img, body);
-        success(res, result, 'Update User Data Success');
-      } else if (imgName.rows[0].img === 'default.png') {
-        const result = await models.update(id, img, body);
-        success(res, result, 'Update User Data Success');
-      } else {
-        fs.unlink(imgPath, ((errImg) => {
-          if (errImg) {
-            (async () => {
-              try {
-                const result = await models.update(id, img, body);
-                success(res, result, 'Update User Data Success');
-              } catch (err) {
-                failed(res, 400, err);
-              }
-            })();
-          } else {
-            (async () => {
-              try {
-                const result = await models.update(id, img, body);
-                success(res, result, 'Update User Data Success');
-              } catch (err) {
-                failed(res, 400, err);
-              }
-            })();
-          }
-        }));
-      }
+      
+      // Note: Old file deletion from Supabase Storage should be implemented here
+      // For now, just update the user record
+      const result = await models.update(id, img, body);
+      success(res, result, 'Update User Data Success');
       } catch (err) {
         failed(res, 500, err);
       }
