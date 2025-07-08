@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     try {
       const data = await models.getmsg(sender, receiver);
       const { id } = data.rows.length > 0 ? data.rows[data.rows.length - 1] : {};
-    if (idMsg) {
+      if (idMsg) {
         await models.delMsg(idMsg);
         const result = await models.getmsg(sender, receiver);
         io.to(sender).emit('history-messages', result.rows);
@@ -80,39 +80,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('offline', (id) => {
-    // eslint-disable-next-line consistent-return
-    const newOn = userOn.filter((e) => {
-      if (e !== id) {
-        console.log(e);
-        return e;
-      }
-    });
-    userOn = newOn;
-    console.log(`client ${id} logout`);
-    socket.emit('get-online-broadcast', userOn);
-  });
-});
-
-const PORT = port || 5000;
-httpServer.listen(PORT, () => {
-  console.log(`service running on port ${PORT}`);
-});
-
-module.exports = io;
-    } else {
-      models.delMsg(id)
-        .then(() => {
-          models.getmsg(sender, receiver)
-            .then((result) => {
-              io.to(sender).emit('history-messages', result.rows);
-              io.to(receiver).emit('history-messages', result.rows);
-            }).catch((err) => {
-              console.log(err);
-            });
-        });
-    }
-  });
   socket.on('offline', (id) => {
     // eslint-disable-next-line consistent-return
     const newOn = userOn.filter((e) => {
