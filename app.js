@@ -5,29 +5,73 @@ const cors = require('cors');
 const http = require('http');
 const bodyParser = require('body-parser');
 const { Server } = require('socket.io');
+const path = require('path');
 const { port } = require('./src/helper/env');
-// const io = require('./src/helper/socket');
 const models = require('./src/models/messagemodel');
 const userrouter = require('./src/routers/userrouter');
 
 const app = express();
+
+// Security and middleware setup
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || false 
+    : '*',
+  credentials: true
+}));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// API routes
 app.use(userrouter);
 
+// Static file serving
 app.use(express.static(`${__dirname}/src/img`));
 
-// membuat http server
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
+
+// Create HTTP server
 const httpServer = http.createServer(app);
-// membuat socketio
+
+// Create Socket.IO server
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' 
+      ? process.env.FRONTEND_URL || false 
+      : '*',
+    credentials: true
   },
 });
+
 let userOn = [];
+
 io.on('connection', (socket) => {
   console.log('a client connected');
+  
   socket.on('login', (room) => {
     console.log(`a user joined to room ${room}`);
     socket.join(room);
@@ -96,7 +140,17 @@ io.on('connection', (socket) => {
 
 const PORT = port || 5000;
 httpServer.listen(PORT, () => {
-  console.log(`service running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Health check available at http://localhost:${PORT}/health`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  httpServer.close(() => {
+    console.log('Process terminated');
+  });
 });
 
 module.exports = io;

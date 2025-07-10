@@ -4,8 +4,15 @@ const express = require('express');
 const userctrl = require('../controllers/userctrl');
 const midAuth = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { authLimiter, generalLimiter } = require('../middleware/security');
 
 const userrouter = express.Router();
+
+// Apply rate limiting
+userrouter.use('/login', authLimiter);
+userrouter.use('/register', authLimiter);
+userrouter.use(generalLimiter);
+
 userrouter
   .get('/user', userctrl.getlist)
   .get('/mydetails', midAuth, userctrl.getdetail)
