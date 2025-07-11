@@ -38,11 +38,17 @@ app.use(express.static(`${__dirname}/src/img`));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('❌ Global Error Handler:', err);
+  console.error('📍 Request URL:', req.url);
+  console.error('🔧 Request Method:', req.method);
+  console.error('📋 Stack trace:', err.stack);
   res.status(500).json({
     success: false,
     message: 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    error: process.env.NODE_ENV === 'development' ? {
+      message: err.message,
+      stack: err.stack
+    } : 'Something went wrong'
   });
 });
 

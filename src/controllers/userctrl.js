@@ -13,6 +13,7 @@ const userctrl = {
   getlist: (req, res) => {
     (async () => {
       try {
+        console.log('📋 Getting user list...');
       const { query } = req;
       const search = query.search === undefined ? '' : query.search;
       const field = query.field === undefined ? 'username' : query.field;
@@ -20,8 +21,14 @@ const userctrl = {
       const limit = query.limit === undefined ? 50 : query.limit;
       const offset = query.page === undefined || query.page === 1 ? 0 : (query.page - 1) * limit;
         
+        console.log('🔍 Query params:', { search, field, sort, limit, offset });
+        
         const result = await models.getlist(search, field, sort, limit, offset);
+        console.log('📊 Query result:', result.rows?.length || 0, 'users found');
+        
         const total = await models.gettotal();
+        console.log('📈 Total users:', total);
+        
         const output = {
           data: result.rows,
           search,
@@ -29,8 +36,11 @@ const userctrl = {
           page: query.page,
           totalpage: Math.ceil(total / limit),
         };
+        console.log('✅ Sending success response');
         success(res, output, 'get user data success');
       } catch (err) {
+        console.error('❌ Error in getlist:', err);
+        console.error('Stack trace:', err.stack);
         failed(res, 500, err);
       }
     })();

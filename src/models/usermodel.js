@@ -4,20 +4,28 @@ const supabase = require('../config/supabase');
 
 const usermodel = {
   gettotal: async () => {
+    console.log('🔢 Getting total user count...');
     const { count, error } = await supabase
       .from('users')
       .select('*', { count: 'exact', head: true });
     
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Error getting total count:', error);
+      throw error;
+    }
+    console.log('✅ Total count retrieved:', count);
     return count;
   },
 
   getlist: async (search, field, sort, limit, offset) => {
+    console.log('📋 Getting user list with params:', { search, field, sort, limit, offset });
+    
     let query = supabase
       .from('users')
       .select('*');
 
     if (search) {
+      console.log('🔍 Adding search filter:', search);
       query = query.ilike('username', `%${search}%`);
     }
 
@@ -25,8 +33,15 @@ const usermodel = {
       .order(field, { ascending: sort === 'asc' })
       .range(offset, offset + limit - 1);
 
+    console.log('🚀 Executing query...');
     const { data, error } = await query;
-    if (error) throw error;
+    
+    if (error) {
+      console.error('❌ Error in getlist query:', error);
+      throw error;
+    }
+    
+    console.log('✅ Query successful, found', data?.length || 0, 'users');
     return { rows: data };
   },
 
